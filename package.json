@@ -1,0 +1,23 @@
+{
+  "name": "webcontainers-express-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^4.3.9"
+  },
+  "dependencies": {
+    "@exuanbo/file-icons-js": "^3.3.0",
+    "@webcontainer/api": "^1.1.5",
+    "browser-fs-access": "^0.35.0",
+    "xterm": "^5.1.0",
+    "xterm-addon-fit": "^0.7.0",
+    "xterm-addon-search": "^0.13.0",
+    "xterm-addon-web-links": "^0.9.0"
+  }
+}
