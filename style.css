@@ -125,3 +125,13 @@ li {
   padding: 5px;
 }
 
+.active-folder {
+  background-color: #feeded; /* Set your desired background color for active folders */
+}
+
+.active-file {
+  font-weight: bold; /* Set your desired style for active files */
+  color: #007bff; /* Set your desired color for active files */
+  /* background-color: rgb(244, 233, 233); */
+}
+

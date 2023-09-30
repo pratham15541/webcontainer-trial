@@ -41,6 +41,8 @@ document.querySelector("#app").innerHTML = `
 <div id="contextMenu">
   <button id="createFolder">Create Folder</button>
   <button id="createFile">Create File</button>
+  <button id="renameFile">Rename</button>
+  <button id="deleteFile">Delete</button>
 </div>
 
       </div>
@@ -76,10 +78,23 @@ let activeFile = null;
 let terminal = null;
 let searchAddon = null;
 let fitAddon = null;
+let activeFileElement = null;
+let activeFolderElement = null;
 
 // Function to set the active file
 async function setActiveFile(filePath) {
   activeFile = filePath;
+
+  // Remove the "active-file" class from the previously active file
+  if (activeFileElement) {
+    activeFileElement.classList.remove("active-file");
+  }
+
+  // Find the corresponding file element and add the "active-file" class
+  activeFileElement = fileTreeElement.querySelector(`[data-file-path="${filePath}"]`);
+  if (activeFileElement) {
+    activeFileElement.classList.add("active-file");
+  }
 }
 
 window.addEventListener("load", async () => {
@@ -121,7 +136,7 @@ window.addEventListener("load", async () => {
   // await installDependenciesAndStartServer(terminal);
 
   // Interval in milliseconds for checking file changes
-  const fileCheckInterval = 5000; // 5 seconds
+  const fileCheckInterval = 2000; // 5 seconds
 
   const fileChangeIntervalId = setInterval(checkFileChanges, fileCheckInterval);
 
@@ -234,6 +249,7 @@ async function readFiles(
     span.textContent = file.name;
 
     span.classList.add("file");
+    span.setAttribute("data-file-path", `${directory}/${file.name}`);
 
     // Get the icon class for the file name
     const iconClass = await getIconClass(file.name, false);
@@ -254,6 +270,40 @@ async function readFiles(
       // Set the active file to the currently selected file
       setActiveFile(filePath);
     });
+
+    // Add event listener for renaming files on F2 key press
+  li.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    const contextMenu = document.getElementById("contextMenu");
+    const renameFile = document.getElementById("renameFile");
+    const deleteFile = document.getElementById("deleteFile");
+    renameFile.onclick = async () => {
+      const currentFileName = file.name;
+      const newName = prompt(`Enter the new name for "${currentFileName}":`);
+      if (newName) {
+        if (newName !== currentFileName) {
+          await renameItem(filePath, newName);
+        } else {
+          alert("Please enter a different name.");
+        }
+      }
+      contextMenu.style.display = "none";
+    };
+    deleteFile.onclick = async () => {
+      if (filePath === "/") {
+        alert("You cannot delete the root folder.");
+        return;
+      }
+      const confirmDelete = confirm(`Are you sure you want to delete "${file.name}"?`);
+      if (confirmDelete) {
+        await deleteFolderRecursive(filePath);
+        contextMenu.style.display = "none";
+      }
+    };
+    contextMenu.style.left = `${event.clientX}px`;
+    contextMenu.style.top = `${event.clientY}px`;
+    contextMenu.style.display = "block";
+  });
 
     ul.appendChild(li);
   }
@@ -667,23 +717,42 @@ async function deleteFolderRecursive(folderPath) {
   console.log(`Finished deleting folder and contents at ${folderPath}`);
 }
 
+
+
 // Event listener to capture the selected folder when it's clicked
 fileTreeElement.addEventListener("click", (event) => {
   const target = event.target;
-
-  // Check if the clicked element or its parent is a folder (i.e., a <details> element)
   const isFolder =
     target.classList.contains("folder") ||
     target.parentElement.classList.contains("folder");
 
   if (isFolder) {
-    // Get the path of the selected folder from the data attribute of the parent <details> element
+    // Remove the "active-folder" class from the previously active folder
+    if (activeFolderElement) {
+      activeFolderElement.classList.remove("active-folder");
+    }
+
     const folderElement = target.closest(".folder");
     selectedFolder = folderElement.getAttribute("data-folder-path");
-    // console.log("Selected Folder:", selectedFolder);
+    activeFolderElement = folderElement;
+
+    // Add the "active-folder" class to the newly active folder
+    activeFolderElement.classList.add("active-folder");
+
+    // Clear the active file when selecting a folder
+    setActiveFile(null);
   } else {
-    // Clear the selected folder if a file or another element is clicked
+    // User clicked on a file, clear the active folder
     selectedFolder = null;
+
+    // Remove the "active-folder" class from the previously active folder
+    if (activeFolderElement) {
+      activeFolderElement.classList.remove("active-folder");
+    }
+
+    // Set the active file
+    const filePath = selectedFolder ? `${selectedFolder}/${target.textContent}` : target.textContent;
+    setActiveFile(filePath);
   }
 });
 
