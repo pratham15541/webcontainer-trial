@@ -14,44 +14,6 @@ import "@exuanbo/file-icons-js/dist/fonts/fontawesome.woff2";
 import "@exuanbo/file-icons-js/dist/fonts/mfixx.woff2";
 import "@exuanbo/file-icons-js/dist/fonts/octicons.woff2";
 
-document.querySelector("#app").innerHTML = `
-    <div class="container">
-      <div class="editor" style="height:300px; padding:0px;">
-        <textarea id="file-content">Please open file to see context here...</textarea>
-      </div>
-      <div class="preview" style="height:300px;">
-        <iframe src="loading.html"></iframe>
-      </div>
-     
-      <div style="height:300px;" class="terminal">
-      <div class="search-box">
-      <input type="text" id="search-input" placeholder="Search in terminal" style="display: none;">
-      <button id="search-next" >Next</button>
-      <button id="search-previous" >Previous</button>
-      <button id="close-search">X</button>
-      <button id="scrollToTopBtn" title="Scroll to Top">↑</button>
-      </div>
-      </div>
-      <div style="height:300px; overflow-y:auto;">
-      <button  class="fileDisplay" style="height:30px">fileDisplay</button>
-      <button  class="fileDisplayMui" style="height:30px">fileDisplayMui</button>
-      <div style="height:260px; overflow-y:auto; position:relative;" id="fileTree">
-      
-      </div>
-<div id="contextMenu">
-  <button id="createFolder">Create Folder</button>
-  <button id="createFile">Create File</button>
-  <button id="renameFile">Rename</button>
-  <button id="deleteFile">Delete</button>
-</div>
-
-      </div>
-         <textarea style="height:300px;" class="fileSt" readonly></textarea>
-         <textarea style="height:300px;" class="fileStMui" readonly></textarea>
-      
-    </div>
-  `;
-
 const iframeEl = document.querySelector("iframe");
 const textareaEl = document.querySelector("#file-content");
 const terminalEl = document.querySelector(".terminal");
